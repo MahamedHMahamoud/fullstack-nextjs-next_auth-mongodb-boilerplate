@@ -3,12 +3,20 @@ import { useSession, signOut } from "next-auth/react"
 
 // Import the `Home.module.css` styles module.
 import styles from '@/styles/Home.module.css'
+import { useState } from "react"
 
 // Define a functional component called `Header`.
 const Header = () => {
   // Call the `useSession` hook to get the current user session data.
   const { data: session } = useSession()
 
+  // Get the current user session data and set in a state
+  const [user, setUser] = useState(
+    { 
+      name: session?.user?.name, 
+      status: session?.user?.status
+    })
+  
   // Define a function to handle signing out.
   function handleSignOut() {
     // Call the `signOut` function to sign the user out of their session.
@@ -19,7 +27,7 @@ const Header = () => {
   // This will display the page header with a logo and a sign-out button or sign-in message.
   return (
     <div className={styles.headerContainer}>
-      <h3>Logo</h3>
+      <h3>{user?.name ? user.name : null + ' - ' + user?.status ? user?.status : null}</h3>
       {/*  Conditionally render either a sign-out button or a sign-in message
       depending on whether the `session` variable is truthy or falsy*/}
       {session ? (
@@ -29,7 +37,7 @@ const Header = () => {
           </button>
         </div>
       ) : (
-        <p>You are not signed in</p>
+        null
       )}
     </div>
   )
