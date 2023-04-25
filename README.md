@@ -52,8 +52,6 @@ MONGODB_URI=mongodb://localhost:27017/YourDatabaseName, where YourDatabaseName i
 2.1.2: For a MongoDB server instance: 
 MONGODB_URI=mongodb+srv://<username>:<password>@<cluster-name>.mongodb.net/<database-name>?retryWrites=true&w=majority
 
-2: Create a .env.local file in the project root directory and add the appropriate MongoDB URI for your database:
-
 3: Install dependencies by running npm install. 
 If you want to install new dependencies, delete the package-lock.json file before running the install command. 
 PS! Note that new dependencies are not guaranteed to work with this boilerplate.
