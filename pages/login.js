@@ -1,16 +1,12 @@
 // Import necessary packages and functions
 import { signIn, useSession } from 'next-auth/react'
-import { useRouter } from 'next/router'
 import { useState } from 'react'
 import styles from '@/styles/Home.module.css'
 
 // Define a component called Login
 const Login = () => {
   // Use the useSession hook to check if the user is already authenticated
-  const { status, loading } = useSession()
-
-  // Use the useRouter hook to navigate to different pages
-  const router = useRouter()
+  const { status } = useSession()
 
   // Define some state variables to hold the user's mobile number and password, as well as any error messages
   const [error, setError] = useState('Please enter Credentials')
@@ -28,19 +24,18 @@ const Login = () => {
     // Check that the user has entered their mobile number and password
     if (mobile.length > 0 && password.length > 0) {      
       // Use the signIn function from the next-auth/react package to sign the user in with their credentials
-      const { error } = await signIn('credentials', {
+      const result = await signIn('credentials', {
         redirect: false,
         mobile: mobile,
         password: password,
         callbackUrl: '/',
       })
+      // If the login failed, display an error message
+      if (result?.error) setError('Invalid mobile or password')
     } else {
       // If the user has not entered their credentials, display an error message
       setError('Please enter your credentials')
     }
-    
-    // If there is an error, display an error message
-    if (error) setError('Something went wrong, please try again')
   }
   
   // Render the login form
