@@ -1,13 +1,14 @@
 // Import necessary packages and styles
 import styles from '@/styles/Home.module.css'
-import { getSession, useSession } from "next-auth/react"
-import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { getServerSession } from "next-auth/next"
+import { useSession } from "next-auth/react"
+import { useState } from 'react';
+import { authOptions } from './api/auth/[...nextauth]'
 
 // This function is used to check if the user has a valid session
 export async function getServerSideProps( context ){
-  // Use the getSession function from next-auth/react to get the user's session
-  const session = await getSession( context );
+  // Use getServerSession to read the user's session directly on the server
+  const session = await getServerSession( context.req, context.res, authOptions );
   // If there is no session, redirect the user to the login page
   if( !session ){
     return {

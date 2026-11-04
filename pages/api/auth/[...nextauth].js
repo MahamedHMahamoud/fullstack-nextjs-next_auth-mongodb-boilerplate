@@ -1,59 +1,51 @@
 // Import necessary packages
-import axios from 'axios';
 import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 
-// Export a NextAuth instance
-export default NextAuth({
+// Exported so pages can read the session on the server with getServerSession
+export const authOptions = {
   providers: [
     CredentialsProvider({
       async authorize(credentials) {
-        try {
-          // Hardcoded user object for demonstration purposes
-          const user = {
-            id: 1,
-            name: "John Doe",
-            mobile: "123456789",
-            status: "Admin",
-            password: "password"
+        // Hardcoded user object for demonstration purposes.
+        // PS! Remove it before deploying, or anyone can log in with these credentials.
+        const user = {
+          id: "1",
+          name: "John Doe",
+          mobile: "123456789",
+          status: "Admin",
+          password: "password"
+        };
+
+        // Check if the provided mobile and password match the hardcoded user's information
+        if (
+          credentials.mobile === user.mobile &&
+          credentials.password === user.password
+        ) {
+          // If the credentials match, return the user object
+          return {
+            id: user.id,
+            name: user.name,
+            status: user.status,
           };
-  
-          // Check if the provided mobile and password match the hardcoded user's information
-          if (
-            credentials.mobile === user.mobile &&
-            credentials.password === user.password
-          ) {
-            // If the credentials match, return the user object
-            return {
-              id: user.id,
-              name: user.name,
-              status: user.status,
-            };
-          } else {
-            // If the credentials don't match, throw an error
-            throw new Error("Invalid mobile or password");
-          }
-  
-          // Uncomment the following section to enable API calls for authentication
-  
-          // const response = await axios.post('./api/system/login', credentials);
-          // const { user } = response.data;
-  
-          // if (user) {
-          //   return {
-          //     id: user.id,
-          //     name: user.name,
-          //     status: user.status,
-          //   };
-          // } else {
-          //   throw new Error('Invalid mobile or password');
-          // }
-        } catch (error) {
-          throw new Error("Internal server error");
         }
+
+        // Returning null tells NextAuth the login failed
+        return null;
+
+        // To authenticate against MongoDB, replace everything above in this function with:
+
+        // const response = await fetch(`${process.env.NEXTAUTH_URL}/api/system/login`, {
+        //   method: 'POST',
+        //   headers: { 'Content-Type': 'application/json' },
+        //   body: JSON.stringify({ mobile: credentials.mobile, password: credentials.password }),
+        // });
+        // if (!response.ok) return null;
+        // const { user } = await response.json();
+        // return user;
       },
     }),
-  ],  
+  ],
 
   callbacks: {
     // Define callbacks to handle the JWT and session objects
@@ -63,10 +55,13 @@ export default NextAuth({
       }
       return token
     },
-    
+
     async session({ session, token }) {
       session.user = token.user
       return session
     }
   },
-});
+};
+
+// Export a NextAuth instance
+export default NextAuth(authOptions);
